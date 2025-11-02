@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禁煙支援アプリ</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Kaku Gothic ProN', sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            padding: 0;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header {
+            background: #E84518;
+            color: white;
+            padding: 50px 25px;
+            text-align: center;
+        }
+        .header h1 { font-size: 28px; margin-bottom: 5px; font-weight: 700; }
+        .header p { font-size: 14px; opacity: 0.9; font-weight: 400; }
+        .content { padding: 20px; }
+        .section {
+            background: white;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #2196B9;
+        }
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 8px;
+        }
+        .input-item label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .input-icon {
+            display: inline-block;
+            width: 26px;
+            height: 26px;
+            line-height: 26px;
+            text-align: center;
+            background: #2196B9;
+            color: white;
+            border-radius: 50%;
+            margin-right: 6px;
+            font-size: 15px;
+        }
+        input[type="range"] {
+            width: 100%;
+            height: 5px;
+            border-radius: 3px;
+            background: #e0e0e0;
+            outline: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #2196B9;
+            cursor: pointer;
+            border: none;
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #2196B9;
+            cursor: pointer;
+            border: none;
+        }
+        .value-display {
+            display: inline-block;
+            background: #2196B9;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 3px;
+            font-size: 16px;
+            font-weight: 700;
+            margin-top: 6px;
+            min-width: 85px;
+            text-align: center;
+        }
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .stat-box {
+            background: white;
+            border-left: 4px solid #2196B9;
+            padding: 12px;
+            border-radius: 3px;
+        }
+        .stat-label {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #E84518;
+            line-height: 1;
+        }
+        
+        /* 比較セクション */
+        .comparison-section {
+            background: white;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        }
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .comparison-box {
+            background: linear-gradient(135deg, #2196B9 0%, #1976D2 100%);
+            color: white;
+            border-radius: 6px;
+            padding: 15px;
+        }
+        .comparison-title {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .comparison-items {
+            display: grid;
+            gap: 10px;
+        }
+        .comparison-item {
+            background: white;
+            color: #333;
+            border-radius: 4px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .comparison-icon {
+            font-size: 32px;
+            flex-shrink: 0;
+        }
+        .comparison-content {
+            flex: 1;
+        }
+        .comparison-label {
+            font-size: 11px;
+            color: #666;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .comparison-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #E84518;
+            line-height: 1;
+        }
+        .comparison-count {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 6px;
+            flex-wrap: wrap;
+        }
+        .count-icon {
+            font-size: 18px;
+        }
+        .count-text {
+            font-size: 13px;
+            font-weight: 700;
+            color: #2196B9;
+            white-space: nowrap;
+        }
+        
+        .savings-box {
+            background: #2196B9;
+            color: white;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
+        .savings-header {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+        }
+        .savings-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .savings-item {
+            background: white;
+            color: #333;
+            border-radius: 4px;
+            padding: 12px;
+        }
+        .savings-item.total {
+            border: 2px solid #EF7C1B;
+        }
+        .savings-label {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .savings-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #E84518;
+            line-height: 1.1;
+            margin-bottom: 4px;
+        }
+        .savings-info {
+            font-size: 10px;
+            color: #666;
+        }
+        .future-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .future-item {
+            background: white;
+            border-radius: 4px;
+            padding: 10px;
+            text-align: center;
+            border: 2px solid #EF7C1B;
+        }
+        .future-period {
+            font-size: 10px;
+            color: #666;
+            margin-bottom: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .future-amount {
+            font-size: 16px;
+            font-weight: 700;
+            color: #2196B9;
+        }
+        .info-notice {
+            background: #fff3e0;
+            border-left: 3px solid #EF7C1B;
+            padding: 10px;
+            border-radius: 3px;
+            margin: 12px 0;
+        }
+        .info-notice-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #E84518;
+            margin-bottom: 4px;
+        }
+        .info-notice-text {
+            font-size: 10px;
+            color: #666;
+            line-height: 1.4;
+        }
+        .chart-box {
+            background: white;
+            border-radius: 6px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        }
+        .chart-header {
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        .chart-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        .chart-subtitle {
+            font-size: 11px;
+            color: #666;
+        }
+        
+        /* Print styles */
+        @media print {
+            @page {
+                size: A4;
+                margin: 6mm;
+            }
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+            .container {
+                max-width: 100%;
+                margin: 0;
+            }
+            .content {
+                padding: 0;
+            }
+            .section, .chart-box, .savings-box, .comparison-section {
+                page-break-inside: avoid;
+                box-shadow: none;
+                margin-bottom: 2px;
+                padding: 5px;
+            }
+            .header {
+                padding: 5px;
+            }
+            .header h1 {
+                font-size: 16px;
+                margin-bottom: 1px;
+            }
+            .header p {
+                font-size: 9px;
+            }
+            .section-title {
+                font-size: 11px;
+                margin-bottom: 4px;
+                padding-bottom: 3px;
+            }
+            .input-grid {
+                gap: 6px;
+            }
+            .input-item label {
+                font-size: 18px;
+                font-weight: 700;
+                margin-bottom: 4px;
+            }
+            .input-icon {
+                width: 32px;
+                height: 32px;
+                line-height: 32px;
+                font-size: 18px;
+                margin-right: 4px;
+            }
+            .value-display {
+                font-size: 18px;
+                padding: 3px 10px;
+                font-weight: 700;
+                min-width: 70px;
+            }
+            .stat-box {
+                padding: 8px;
+                margin-top: 4px !important;
+            }
+            .stat-label {
+                font-size: 9px;
+                margin-bottom: 4px;
+            }
+            .stat-value {
+                font-size: 20px;
+            }
+            .savings-box, .comparison-box {
+                padding: 6px;
+            }
+            .savings-header, .comparison-title {
+                font-size: 11px;
+                margin-bottom: 5px;
+                padding-bottom: 3px;
+            }
+            .savings-content, .comparison-items {
+                gap: 5px;
+            }
+            .savings-item, .comparison-item {
+                padding: 5px;
+            }
+            .savings-label, .comparison-label {
+                font-size: 8px;
+                margin-bottom: 3px;
+            }
+            .savings-value {
+                font-size: 18px;
+            }
+            #save80-box .savings-value {
+                font-size: 24px;
+                font-weight: 900;
+            }
+            #total-spent-box .stat-value {
+                font-size: 24px;
+                font-weight: 900;
+            }
+            .savings-info {
+                font-size: 8px;
+            }
+            .comparison-value {
+                font-size: 11px;
+            }
+            .comparison-icon {
+                font-size: 18px;
+            }
+            .comparison-content {
+                gap: 6px;
+            }
+            .comparison-count {
+                margin-top: 2px;
+            }
+            .count-icon {
+                font-size: 11px;
+            }
+            .count-text {
+                font-size: 8px;
+            }
+            .future-grid {
+                gap: 3px;
+                margin-top: 4px;
+            }
+            .future-item {
+                padding: 4px;
+            }
+            .future-period {
+                font-size: 7px;
+                margin-bottom: 2px;
+            }
+            .future-amount {
+                font-size: 10px;
+            }
+            .info-notice {
+                padding: 4px;
+                margin: 3px 0;
+            }
+            .info-notice-title {
+                font-size: 8px;
+                margin-bottom: 1px;
+            }
+            .info-notice-text {
+                font-size: 7px;
+                line-height: 1.2;
+            }
+            .chart-box {
+                padding: 4px;
+            }
+            .chart-header {
+                margin-bottom: 4px;
+            }
+            .chart-title {
+                font-size: 10px;
+                margin-bottom: 1px;
+            }
+            .chart-subtitle {
+                font-size: 7px;
+            }
+            canvas {
+                max-height: 140px !important;
+            }
+            input[type="range"] {
+                height: 4px;
+            }
+            input[type="range"]::-webkit-slider-thumb {
+                width: 12px;
+                height: 12px;
+            }
+            input[type="range"]::-moz-range-thumb {
+                width: 12px;
+                height: 12px;
+            }
+            .two-col {
+                gap: 6px;
+            }
+            .comparison-grid {
+                gap: 6px;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .input-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+            .two-col, .comparison-grid { grid-template-columns: 1fr; }
+            .savings-content { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 600px) {
+            .header { padding: 20px 15px; }
+            .header h1 { font-size: 22px; }
+            .header p { font-size: 12px; }
+            .content { padding: 15px 10px; }
+            .section, .comparison-section { padding: 12px; }
+            .input-grid { grid-template-columns: 1fr; gap: 10px; }
+            .future-grid { grid-template-columns: 1fr; }
+            .stat-value { font-size: 20px; }
+            .savings-value { font-size: 20px; }
+            .future-amount { font-size: 14px; }
+            .comparison-value { font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🚭 禁煙支援アプリ</h1>
+        <p>タバコにかけた費用と、禁煙による節約効果を可視化</p>
+    </div>
+    <div class="container">
+        <div class="content">
+            <div class="section">
+                <div class="section-title">基本情報を入力</div>
+                <div class="input-grid">
+                    <div class="input-item">
+                        <label><span class="input-icon">👤</span>現在の年齢</label>
+                        <input type="range" id="age" min="20" max="79" value="40">
+                        <div class="value-display"><span id="age-val">40</span> 歳</div>
+                    </div>
+                    <div class="input-item">
+                        <label><span class="input-icon">🚬</span>1日に吸う本数</label>
+                        <input type="range" id="cigs" min="1" max="60" value="20">
+                        <div class="value-display"><span id="cigs-val">20</span> 本</div>
+                    </div>
+                    <div class="input-item">
+                        <label><span class="input-icon">📅</span>喫煙年数</label>
+                        <input type="range" id="years" min="1" max="50" value="20">
+                        <div class="value-display"><span id="years-val">20</span> 年</div>
+                    </div>
+                </div>
+                <div style="margin-top: 15px; padding-top: 12px; border-top: 1px solid #e0e0e0;">
+                    <div class="input-item">
+                        <label><span class="input-icon">📈</span>タバコ価格の年間値上がり率</label>
+                        <input type="range" id="rate" min="0" max="3" step="0.1" value="3.0">
+                        <div class="value-display"><span id="rate-val">3.0</span> %</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="two-col">
+                <div class="section">
+                    <div class="section-title">これまでの支出</div>
+                    <div class="stat-box" id="total-spent-box">
+                        <div class="stat-label">総支出額</div>
+                        <div class="stat-value" id="spent">¥0</div>
+                    </div>
+                    <div class="stat-box" style="margin-top: 8px;">
+                        <div class="stat-label">1日あたりの平均</div>
+                        <div class="stat-value" id="daily">¥0</div>
+                    </div>
+                </div>
+
+                <div class="savings-box">
+                    <div class="savings-header">禁煙の節約効果</div>
+                    <div class="savings-content">
+                        <div class="savings-item" id="save80-box">
+                            <div class="savings-label">80歳まで</div>
+                            <div class="savings-value" id="save80">¥0</div>
+                            <div class="savings-info">年齢: <span id="cur-age">40</span>歳</div>
+                            <div class="savings-info" style="margin-top: 4px; color: #2196B9; font-weight: 600;">80歳時: <span id="price-at-80">¥0</span>/箱</div>
+                        </div>
+                        <div class="savings-item total">
+                            <div class="savings-label">生涯総額</div>
+                            <div class="savings-value" id="total">¥0</div>
+                        </div>
+                    </div>
+                    <div class="future-grid">
+                        <div class="future-item">
+                            <div class="future-period">1年後</div>
+                            <div class="future-amount" id="s1">¥0</div>
+                        </div>
+                        <div class="future-item">
+                            <div class="future-period">5年後</div>
+                            <div class="future-amount" id="s5">¥0</div>
+                        </div>
+                        <div class="future-item">
+                            <div class="future-period">10年後</div>
+                            <div class="future-amount" id="s10">¥0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 比較セクション -->
+            <div class="comparison-section">
+                <div class="section-title">💰 他のものに換算すると...</div>
+                <div class="comparison-grid">
+                    <div class="comparison-box">
+                        <div class="comparison-title">
+                            <span>📊</span>
+                            <span>今までに使った額</span>
+                        </div>
+                        <div class="comparison-items">
+                            <div class="comparison-item">
+                                <div class="comparison-icon">✈️</div>
+                                <div class="comparison-content">
+                                    <div class="comparison-label">海外旅行（50万円）</div>
+                                    <div class="comparison-value" id="past-travel">0回分</div>
+                                    <div class="comparison-count" id="past-travel-icons"></div>
+                                </div>
+                            </div>
+                            <div class="comparison-item">
+                                <div class="comparison-icon">🚗</div>
+                                <div class="comparison-content">
+                                    <div class="comparison-label">自動車（300万円）</div>
+                                    <div class="comparison-value" id="past-car">0回分</div>
+                                    <div class="comparison-count" id="past-car-icons"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="comparison-box">
+                        <div class="comparison-title">
+                            <span>🎯</span>
+                            <span>これから使う額（80歳まで吸った場合）</span>
+                        </div>
+                        <div class="comparison-items">
+                            <div class="comparison-item">
+                                <div class="comparison-icon">✈️</div>
+                                <div class="comparison-content">
+                                    <div class="comparison-label">海外旅行（50万円）</div>
+                                    <div class="comparison-value" id="future-travel">0回分</div>
+                                    <div class="comparison-count" id="future-travel-icons"></div>
+                                </div>
+                            </div>
+                            <div class="comparison-item">
+                                <div class="comparison-icon">🚗</div>
+                                <div class="comparison-content">
+                                    <div class="comparison-label">自動車（300万円）</div>
+                                    <div class="comparison-value" id="future-car">0回分</div>
+                                    <div class="comparison-count" id="future-car-icons"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-notice">
+                <div class="info-notice-title">💡 計算方法</div>
+                <div class="info-notice-text">
+                    実際の日本のタバコ価格推移データ（1969年〜2021年）を使用。将来予測には年率3%の値上がりを適用。
+                </div>
+            </div>
+
+            <div class="chart-box">
+                <div class="chart-header">
+                    <div class="chart-title">📊 累積費用の推移</div>
+                    <div class="chart-subtitle">過去の実支出と将来予測</div>
+                </div>
+                <canvas id="chart" style="max-height: 280px;"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script>
+        window.addEventListener('load', function() {
+            const prices = [
+                {year:1969,price:100},{year:1975,price:150},{year:1980,price:180},
+                {year:1983,price:200},{year:1986,price:220},{year:1997,price:230},
+                {year:1998,price:250},{year:2003,price:280},{year:2006,price:300},
+                {year:2010,price:440},{year:2014,price:460},{year:2018,price:500},
+                {year:2019,price:510},{year:2020,price:560},{year:2021,price:600}
+            ];
+            const now = 2025;
+            let rate = 0.03;
+
+            function getPrice(y) {
+                if (y >= 2021) return 600 * Math.pow(1 + rate, y - 2021);
+                for (let i = 0; i < prices.length - 1; i++) {
+                    let c = prices[i], n = prices[i + 1];
+                    if (y >= c.year && y < n.year) {
+                        return c.price + (n.price - c.price) * (y - c.year) / (n.year - c.year);
+                    }
+                }
+                return y < prices[0].year ? prices[0].price : prices[prices.length - 1].price;
+            }
+
+            function calcSpent(c, y) {
+                let s = now - y, t = 0;
+                for (let i = s; i < now; i++) t += getPrice(i) * (c / 20) * 365;
+                return Math.round(t);
+            }
+
+            function calcFuture(c, y) {
+                let t = 0;
+                for (let i = 0; i < y; i++) t += getPrice(now + i) * (c / 20) * 365;
+                return Math.round(t);
+            }
+
+            function generateIcons(count, icon) {
+                const max = 10;
+                const display = Math.min(count, max);
+                let html = '';
+                for (let i = 0; i < display; i++) {
+                    html += '<span class="count-icon">' + icon + '</span>';
+                }
+                if (count > max) {
+                    html += '<span class="count-text">...他' + (count - max) + '回</span>';
+                }
+                return html;
+            }
+
+            let ch = null;
+
+            function update() {
+                const age = +document.getElementById('age').value;
+                const cigs = +document.getElementById('cigs').value;
+                const years = +document.getElementById('years').value;
+                rate = +document.getElementById('rate').value / 100;
+
+                document.getElementById('age-val').textContent = age;
+                document.getElementById('cigs-val').textContent = cigs;
+                document.getElementById('years-val').textContent = years;
+                document.getElementById('rate-val').textContent = (rate * 100).toFixed(1);
+                document.getElementById('cur-age').textContent = age;
+
+                const spent = calcSpent(cigs, years);
+                const daily = Math.round(spent / (years * 365));
+                document.getElementById('spent').textContent = '¥' + spent.toLocaleString();
+                document.getElementById('daily').textContent = '¥' + daily.toLocaleString();
+
+                const s1 = calcFuture(cigs, 1);
+                const s5 = calcFuture(cigs, 5);
+                const s10 = calcFuture(cigs, 10);
+                document.getElementById('s1').textContent = '¥' + s1.toLocaleString();
+                document.getElementById('s5').textContent = '¥' + s5.toLocaleString();
+                document.getElementById('s10').textContent = '¥' + s10.toLocaleString();
+
+                const y80 = Math.max(0, 80 - age);
+                const f80 = calcFuture(cigs, y80);
+                const tot = spent + f80;
+                const priceAt80 = y80 > 0 ? Math.round(getPrice(now + y80 - 1)) : Math.round(getPrice(now));
+                document.getElementById('save80').textContent = '¥' + f80.toLocaleString();
+                document.getElementById('total').textContent = '¥' + tot.toLocaleString();
+                document.getElementById('price-at-80').textContent = '¥' + priceAt80.toLocaleString();
+
+                // 比較計算
+                const travelPrice = 500000;
+                const carPrice = 3000000;
+
+                const pastTravel = Math.floor(spent / travelPrice);
+                const pastCar = Math.floor(spent / carPrice);
+                const futureTravel = Math.floor(f80 / travelPrice);
+                const futureCar = Math.floor(f80 / carPrice);
+
+                document.getElementById('past-travel').textContent = pastTravel + '回分';
+                document.getElementById('past-car').textContent = pastCar + '回分';
+                document.getElementById('future-travel').textContent = futureTravel + '回分';
+                document.getElementById('future-car').textContent = futureCar + '回分';
+
+                document.getElementById('past-travel-icons').innerHTML = generateIcons(pastTravel, '✈️');
+                document.getElementById('past-car-icons').innerHTML = generateIcons(pastCar, '🚗');
+                document.getElementById('future-travel-icons').innerHTML = generateIcons(futureTravel, '✈️');
+                document.getElementById('future-car-icons').innerHTML = generateIcons(futureCar, '🚗');
+
+                const start = now - years;
+                const end = now + 10;
+                const labs = [], past = [], fut = [], pric = [];
+                let cum = 0;
+
+                for (let y = start; y <= now; y++) {
+                    labs.push(y);
+                    pric.push(Math.round(getPrice(y)));
+                    if (y < now) cum += getPrice(y) * (cigs / 20) * 365;
+                    past.push(Math.round(cum));
+                    fut.push(null);
+                }
+
+                for (let y = now + 1; y <= end; y++) {
+                    labs.push(y);
+                    pric.push(Math.round(getPrice(y)));
+                    cum += getPrice(y) * (cigs / 20) * 365;
+                    past.push(null);
+                    fut.push(Math.round(cum));
+                }
+
+                fut[years] = past[years];
+
+                if (ch) ch.destroy();
+
+                const ctx = document.getElementById('chart');
+                if (ctx && typeof Chart !== 'undefined') {
+                    ch = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labs,
+                            datasets: [
+                                {
+                                    label: 'これまでの累積費用',
+                                    data: past,
+                                    borderColor: '#2196B9',
+                                    backgroundColor: 'rgba(33,150,185,0.15)',
+                                    borderWidth: 2,
+                                    tension: 0.1,
+                                    fill: true,
+                                    pointRadius: 3,
+                                    pointBackgroundColor: '#2196B9',
+                                    yAxisID: 'y'
+                                },
+                                {
+                                    label: 'このまま吸い続けた場合',
+                                    data: fut,
+                                    borderColor: '#EF7C1B',
+                                    backgroundColor: 'rgba(239,124,27,0.15)',
+                                    borderWidth: 2,
+                                    tension: 0.1,
+                                    fill: true,
+                                    borderDash: [8, 4],
+                                    pointRadius: 3,
+                                    pointBackgroundColor: '#EF7C1B',
+                                    yAxisID: 'y'
+                                },
+                                {
+                                    label: 'タバコ1箱の価格',
+                                    data: pric,
+                                    borderColor: '#E84518',
+                                    borderWidth: 2,
+                                    tension: 0.1,
+                                    fill: false,
+                                    pointRadius: 2,
+                                    pointBackgroundColor: '#E84518',
+                                    yAxisID: 'y1'
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: true,
+                            aspectRatio: 2.5,
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    position: 'top',
+                                    labels: {
+                                        font: { size: 11, weight: '600' },
+                                        padding: 10,
+                                        usePointStyle: false,
+                                        boxWidth: 30,
+                                        boxHeight: 2
+                                    }
+                                },
+                                tooltip: {
+                                    backgroundColor: 'rgba(0,0,0,0.85)',
+                                    padding: 8,
+                                    titleFont: { size: 12, weight: '600' },
+                                    bodyFont: { size: 11 },
+                                    callbacks: {
+                                        label: function(c) {
+                                            return c.parsed.y ? c.dataset.label + ': ¥' + c.parsed.y.toLocaleString() : null;
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    grid: { display: false },
+                                    ticks: { font: { size: 10 } }
+                                },
+                                y: {
+                                    position: 'left',
+                                    grid: { color: 'rgba(0,0,0,0.05)' },
+                                    title: {
+                                        display: true,
+                                        text: '累積費用（円）',
+                                        color: '#2196B9',
+                                        font: { size: 12, weight: '700' }
+                                    },
+                                    ticks: {
+                                        callback: function(v) { return '¥' + v.toLocaleString(); },
+                                        font: { size: 10 },
+                                        color: '#2196B9'
+                                    }
+                                },
+                                y1: {
+                                    position: 'right',
+                                    grid: { drawOnChartArea: false },
+                                    title: {
+                                        display: true,
+                                        text: '1箱の価格（円）',
+                                        color: '#E84518',
+                                        font: { size: 12, weight: '700' }
+                                    },
+                                    ticks: {
+                                        callback: function(v) { return '¥' + v.toLocaleString(); },
+                                        font: { size: 10 },
+                                        color: '#E84518'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+
+            document.getElementById('age').addEventListener('input', update);
+            document.getElementById('cigs').addEventListener('input', update);
+            document.getElementById('years').addEventListener('input', update);
+            document.getElementById('rate').addEventListener('input', update);
+
+            update();
+        });
+    </script>
+</body>
+</html>
